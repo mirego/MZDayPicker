@@ -30,11 +30,11 @@
 CGFloat const kDefaultDayLabelFontSize = 25.0f;
 CGFloat const kDefaultDayNameLabelFontSize = 11.0f;
 
-CGFloat const kDefaultCellHeight = 64.0f;
-CGFloat const kDefaultCellWidth = 64.0f;
-CGFloat const kDefaultCellFooterHeight = 8.0f;
+CGFloat const kDefaultCellHeight = 73.0f;
+CGFloat const kDefaultCellWidth = 47.0f;
+CGFloat const kDefaultCellFooterHeight = 0.0f;
 
-CGFloat const kDefaultDayLabelMaxZoomValue = 7.0f;
+CGFloat const kDefaultDayLabelMaxZoomValue = 0.0f;
 
 NSInteger const kDefaultInitialInactiveDays = 8;
 NSInteger const kDefaultFinalInactiveDays = 8;
@@ -50,8 +50,8 @@ NSInteger const kDefaultFinalInactiveDays = 8;
 #define kDefaultShadowCellOffset CGSizeMake(0.0, 0.0)
 #define kDefaultShadowCellRadius 5
 
-#define kDefaultColorDay [UIColor blackColor]
-#define kDefaultColorDayName [UIColor colorWithRed:0.55f green:0.04f blue:0.04f alpha:1.00f]
+#define kDefaultColorDay [UIColor grayColor]
+#define kDefaultColorDayName [UIColor darkGrayColor]
 #define kDefaultColorBottomBorder [UIColor colorWithRed:0.22f green:0.57f blue:0.80f alpha:1.00f]
 
 
@@ -83,7 +83,6 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 
 @implementation MZDayPicker
-
 - (void)setMonth:(NSInteger)month
 {
     if (_month != month) {
@@ -129,6 +128,24 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 - (void)setDayNameLabelFontSize:(CGFloat)dayNameLabelFontSize
 {
     _dayNameLabelFontSize = dayNameLabelFontSize;
+    [self.tableView reloadData];
+}
+
+- (void)setDayLabelFont:(UIFont *)dayLabelFont
+{
+    _dayLabelFont = dayLabelFont;
+    [self.tableView reloadData];
+}
+
+- (void)setDayNameLabelFont:(UIFont *)dayNameLabelFont
+{
+    _dayNameLabelFont = dayNameLabelFont;
+    [self.tableView reloadData];
+}
+
+- (void)setDayNameLabelSelectedFont:(UIFont *)dayNameLabelSelectedFont
+{
+    _dayNameLabelSelectedFont = dayNameLabelSelectedFont;
     [self.tableView reloadData];
 }
 
@@ -221,6 +238,16 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     
 }
 
+- (void)setSelectedBackgroundImage:(UIImage *)selectedBackgroundImage
+{
+    _selectedBackgroundImage = selectedBackgroundImage;
+    
+    UIImageView *backgroundView = [[UIImageView alloc] initWithImage:selectedBackgroundImage];
+    [backgroundView setFrame:CGRectMake((self.frame.size.width - backgroundView.frame.size.width) / 2, 0, backgroundView.frame.size.width, backgroundView.frame.size.height)];
+    [self addSubview:backgroundView];
+    [self sendSubviewToBack:backgroundView];
+}
+
 - (MZDayPickerCell *)cellForDay:(MZDay *)day
 {
     NSInteger dayIndex = [self.tableDaysData indexOfObject:day];
@@ -283,7 +310,6 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         self.layer.shadowOpacity = kDefaultShadowOpacity;
         self.layer.shadowRadius = 5;
         self.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
-        
     }
     return self;
 }
@@ -474,31 +500,68 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
             
             if (distance < self.dayCellSize.width && distance > -self.dayCellSize.width) {
                 
-                cell.dayLabel.font = [cell.dayLabel.font fontWithSize:self.dayLabelFontSize + self.dayLabelZoomScale * zoomStep];
+                if (_dayLabelFont) {
+                    cell.dayLabel.font = _dayLabelFont;
+                    [cell.dayLabel setTextColor:[UIColor whiteColor]];
+                } else {
+                    cell.dayLabel.font = [cell.dayLabel.font fontWithSize:self.dayLabelFontSize + self.dayLabelZoomScale * zoomStep];
+                }
+                
+                if (_dayNameLabelFont) {
+                    cell.dayNameLabel.font = _dayNameLabelSelectedFont;
+                }
                 [cell setBottomBorderSlideHeight:zoomStep];
                 
+                
+                
             } else {
-                cell.dayLabel.font = [cell.dayLabel.font fontWithSize:self.dayLabelFontSize];
+                if (_dayLabelFont) {
+                    cell.dayLabel.font = _dayLabelFont;
+                    [cell.dayLabel setTextColor:kDefaultColorDay];
+                } else {
+                    cell.dayLabel.font = [cell.dayLabel.font fontWithSize:self.dayLabelFontSize];
+                }
+                
+                if (_dayNameLabelFont) {
+                    cell.dayNameLabel.font = _dayNameLabelFont;
+                }
                 [cell setBottomBorderSlideHeight:0.0];
             }
             
-            // Shadow around cell
             CGFloat shadowStep = cosf(M_PI_2*distance/self.dayCellSize.width*2);
             
             if (distance < self.dayCellSize.width/2 && distance > -self.dayCellSize.width/2) {
-                
                 cell.containerView.backgroundColor = self.backgroundPickerColor;
-                cell.containerView.layer.shadowOpacity = shadowStep;
-                
             } else {
                 cell.containerView.backgroundColor = [UIColor clearColor];
-                cell.containerView.layer.shadowOpacity = 0;
-                
             }
             
         }
     }
     
+    if (_currentDate) {
+        CGPoint point = [self convertPoint:CGPointMake(self.frame.size.width/2.0, self.dayCellSize.height/2.0) toView:self.tableView];
+        
+        NSIndexPath* centerIndexPath = [self.tableView indexPathForRowAtPoint:CGPointMake(0, point.y)];
+        NSDate* newDate = [(MZDay *)self.tableDaysData[centerIndexPath.row] date];
+        
+        NSDateComponents *newComponents = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:newDate];
+        NSDateComponents *oldComponents = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:_currentDate];
+
+        if (oldComponents.month != newComponents.month) {
+            if ([self.delegate respondsToSelector:@selector(dayPicker:monthDidChange:)]) {
+                [self.delegate dayPicker:self monthDidChange:newComponents.month + 1];
+            }
+        }
+        
+        if (oldComponents.year != newComponents.year) {
+            if ([self.delegate respondsToSelector:@selector(dayPicker:yearDidChange:)]) {
+                [self.delegate dayPicker:self yearDidChange:newComponents.year];
+            }
+        }
+        
+        _currentDate = newDate;
+    }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
@@ -581,13 +644,18 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     [cell setUserInteractionEnabled:NO];
     
     cell.dayLabel.textColor = self.activeDayNameColor;
-    cell.dayLabel.font = [cell.dayLabel.font fontWithSize:self.dayLabelFontSize];
-    cell.dayNameLabel.font = [cell.dayLabel.font fontWithSize:self.dayNameLabelFontSize];
+    
+    if (_dayNameLabelFont) {
+        cell.dayNameLabel.font = _dayNameLabelFont;
+    } else {
+        cell.dayNameLabel.font = [cell.dayLabel.font fontWithSize:self.dayNameLabelFontSize];
+    }
     cell.dayNameLabel.textColor = self.activeDayNameColor;
     [cell setBottomBorderColor:self.bottomBorderColor];
     
     cell.dayLabel.text = [NSString stringWithFormat:@"%@",day.day];
-    cell.dayNameLabel.text = [NSString stringWithFormat:@"%@",day.name];
+    
+    cell.dayNameLabel.text = [NSString stringWithFormat:@"%@",[day.name substringToIndex:3]];
     
     if ([self.dataSource respondsToSelector:@selector(dayPicker:titleForCellDayLabelInDay:)]) {
         cell.dayLabel.text = [self.dataSource dayPicker:self titleForCellDayLabelInDay:day];
@@ -599,21 +667,6 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     
     [self setShadowForCell:cell];
     
-    if (indexPath.row == _currentIndex.row) {
-        cell.containerView.backgroundColor = self.backgroundPickerColor;
-        cell.containerView.layer.shadowOpacity = 1.0;
-        
-        [cell setBottomBorderSlideHeight:1.0];
-        
-        cell.dayLabel.font = [cell.dayLabel.font fontWithSize:self.dayLabelFontSize+self.dayLabelZoomScale];
-        
-    } else {
-        cell.dayLabel.font = [cell.dayLabel.font fontWithSize:self.dayLabelFontSize];
-        
-        cell.containerView.backgroundColor = [UIColor clearColor];
-        [cell setBottomBorderSlideHeight:0];
-    }
-    
     if (NSRangeContainsRow(self.activeDays, indexPath.row - kDefaultInitialInactiveDays + 1)) {
         cell.dayLabel.textColor = kDefaultColorDay;
         cell.dayNameLabel.textColor = kDefaultColorDayName;
@@ -621,6 +674,40 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     } else {
         cell.dayLabel.textColor = kDefaultColorInactiveDay;
         cell.dayNameLabel.textColor = kDefaultColorInactiveDay;
+    }
+    
+    if (indexPath.row == _currentIndex.row) {
+        cell.containerView.backgroundColor = self.backgroundPickerColor;
+        cell.containerView.layer.shadowOpacity = 0;
+        
+        [cell setBottomBorderSlideHeight:1.0];
+        
+        if (_dayLabelFont) {
+            [cell.dayLabel setFont:_dayLabelFont];
+        } else {
+            cell.dayLabel.font = [cell.dayLabel.font fontWithSize:self.dayLabelFontSize+self.dayLabelZoomScale];
+        }
+        
+        if (_dayNameLabelSelectedFont) {
+            cell.dayNameLabel.font = _dayNameLabelSelectedFont;
+        }
+        
+        [cell.dayLabel setTextColor:[UIColor whiteColor]];
+        
+    } else {
+        if (_dayLabelFont) {
+            cell.dayLabel.font = _dayLabelFont;
+            [cell.dayLabel setTextColor:kDefaultColorDay];
+        } else {
+            cell.dayLabel.font = [cell.dayLabel.font fontWithSize:self.dayLabelFontSize];
+        }
+        
+        if (_dayNameLabelFont) {
+            cell.dayNameLabel.font = _dayNameLabelFont;
+        }
+        
+        cell.containerView.backgroundColor = [UIColor clearColor];
+        [cell setBottomBorderSlideHeight:0];
     }
     
     return cell;

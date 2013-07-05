@@ -45,6 +45,9 @@
 - (void)dayPicker:(MZDayPicker *)dayPicker willSelectDay:(MZDay *)day;
 - (void)dayPicker:(MZDayPicker *)dayPicker didSelectDay:(MZDay *)day;
 
+- (void)dayPicker:(MZDayPicker *)dayPicker monthDidChange:(NSInteger)month;
+- (void)dayPicker:(MZDayPicker *)dayPicker yearDidChange:(NSInteger)year;
+
 @end
 
 @interface MZDayPicker : UIView
@@ -62,6 +65,11 @@
 @property (nonatomic, strong) UIColor *backgroundPickerColor;
 
 /*
+ * Selected day background
+ */
+@property (nonatomic) UIImage *selectedBackgroundImage;
+
+/*
  * Property for cell footer color (optional)
  */
 @property (nonatomic, strong) UIColor *bottomBorderColor;
@@ -69,6 +77,9 @@
 /* Day number and name font size (optional) */
 @property (nonatomic, assign) CGFloat dayLabelFontSize;
 @property (nonatomic, assign) CGFloat dayNameLabelFontSize;
+@property (nonatomic, assign) UIFont *dayLabelFont;
+@property (nonatomic, assign) UIFont *dayNameLabelFont;
+@property (nonatomic, assign) UIFont *dayNameLabelSelectedFont;
 
 /* Day number zoom scale (optional) */
 @property (nonatomic, assign) CGFloat dayLabelZoomScale;
