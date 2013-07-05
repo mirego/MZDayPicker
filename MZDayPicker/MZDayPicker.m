@@ -405,9 +405,12 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     
     for (int i = kDefaultInitialInactiveDays; i >= 1; i--) {
         NSDate *date = [_startDate dateByAddingTimeInterval:-(i * 60.0 * 60.0 * 24.0)];
-        
+        NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:date];
+
         MZDay *newDay = [[MZDay alloc] init];
-        newDay.day = @([[dateNumberFormatter stringFromDate:date] integerValue]);
+        newDay.day = [NSNumber numberWithInt:components.day];
+        newDay.month = [NSNumber numberWithInt:components.month];
+        newDay.year = [NSNumber numberWithInt:components.year];
         newDay.name = [dateNameFormatter stringFromDate:date];
         newDay.date = date;
         
@@ -417,9 +420,12 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     NSInteger numberOfActiveDays = 0;
     
     for (NSDate *date = _startDate; [date compare: _endDate] <= 0; date = [date dateByAddingTimeInterval:24 * 60 * 60] ) {
-
+        NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:date];
+        
         MZDay *newDay = [[MZDay alloc] init];
-        newDay.day = @([[dateNumberFormatter stringFromDate:date] integerValue]);
+        newDay.day = [NSNumber numberWithInt:components.day];
+        newDay.month = [NSNumber numberWithInt:components.month];
+        newDay.year = [NSNumber numberWithInt:components.year];
         newDay.name = [dateNameFormatter stringFromDate:date];
         newDay.date = date;
         
@@ -431,8 +437,12 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     for (int i = 1; i <= kDefaultFinalInactiveDays; i++) {
         NSDate *date = [_endDate dateByAddingTimeInterval:(i * 60.0 * 60.0 * 24.0)];
 
+        NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:date];
+        
         MZDay *newDay = [[MZDay alloc] init];
-        newDay.day = @([[dateNumberFormatter stringFromDate:date] integerValue]);
+        newDay.day = [NSNumber numberWithInt:components.day];
+        newDay.month = [NSNumber numberWithInt:components.month];
+        newDay.year = [NSNumber numberWithInt:components.year];
         newDay.name = [dateNameFormatter stringFromDate:date];
         newDay.date = date;
         
