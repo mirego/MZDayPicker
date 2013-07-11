@@ -191,17 +191,18 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     if (date) {
         NSInteger components = (NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit);
         
-        NSDateComponents *componentsFromDate = [[NSCalendar currentCalendar] components:components
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        NSDateComponents *componentsFromDate = [calendar components:components
                                                                                fromDate:date];
         
         [self.tableDaysData enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             MZDay *day = obj;
             
-            NSDateComponents *componentsFromDayDate = [[NSCalendar currentCalendar] components:components
+            NSDateComponents *componentsFromDayDate = [calendar components:components
                                                                                       fromDate: day.date];
             
-            NSDate *searchingDate = [[NSCalendar currentCalendar] dateFromComponents:componentsFromDate];
-            NSDate *dayDate = [[NSCalendar currentCalendar] dateFromComponents:componentsFromDayDate];
+            NSDate *searchingDate = [calendar dateFromComponents:componentsFromDate];
+            NSDate *dayDate = [calendar dateFromComponents:componentsFromDayDate];
             
             NSComparisonResult result = [searchingDate compare:dayDate];
             
@@ -478,7 +479,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
             if (indexPath.row != self.currentIndex.row) {
                 
                 if ([self.delegate respondsToSelector:@selector(dayPicker:willSelectDay:)])
-                    [self.delegate dayPicker:self willSelectDay:self.tableDaysData[indexPath.row]];
+                    [self.delegate dayPicker:self willSelectDay:self.tableDaysData[indexPath.row-1]];
                 
                 _currentDay = indexPath.row-1;
                 _currentDate = [(MZDay *)self.tableDaysData[indexPath.row] date];
@@ -719,6 +720,8 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         cell.containerView.backgroundColor = [UIColor clearColor];
         [cell setBottomBorderSlideHeight:0];
     }
+    
+    [cell setBackgroundColor:[UIColor clearColor]];
     
     return cell;
     
