@@ -216,6 +216,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 }
 
+
 - (void)setCurrentDate:(NSDate *)date
 {
     [self setCurrentDate:date animated:NO];
@@ -649,7 +650,16 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     }
     
     MZDay *day = self.tableDaysData[indexPath.row];
+
+    MZDay *dayForEvent = self.tableDaysData[indexPath.row - 1];
+    [cell setNumberOfEvents:[self numberOfEventsForDate:dayForEvent.date]];
     
+    if ([dayForEvent.date compare:[NSDate date]] == NSOrderedDescending) {
+        [cell.eventsLabel setTextColor:_futureEventsColor];
+    } else {
+        [cell.eventsLabel setTextColor:_pastEventsColor];
+    }
+
     // Bug: I can't use default UITableView select row, because in some case, row's didn't selected
     // I Handled it by tap gesture recognizer
     [cell setUserInteractionEnabled:NO];
@@ -735,6 +745,24 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     cell.containerView.layer.shadowOpacity = 0.0;
     cell.containerView.layer.shadowColor = kDefaultShadowCellColor.CGColor;
     cell.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:cell.containerView.bounds].CGPath;
+}
+
+- (void)setEventDates:(NSArray *)eventDates
+{
+    _eventDates = eventDates;
+    [self.tableView reloadData];
+}
+
+- (NSInteger)numberOfEventsForDate:(NSDate *)date
+{
+    NSInteger numberOfEvents = 0;
+    for (NSDate *eventDate in _eventDates) {
+        if ([eventDate compare:date] == NSOrderedSame) {
+            numberOfEvents++;
+        }
+    }
+
+    return numberOfEvents;
 }
 
 @end

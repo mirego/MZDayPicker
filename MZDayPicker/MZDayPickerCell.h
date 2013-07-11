@@ -30,7 +30,9 @@
 @property (nonatomic, readonly) UIView *containerView;
 @property (nonatomic, readonly) UILabel *dayLabel;
 @property (nonatomic, readonly) UILabel *dayNameLabel;
+@property (nonatomic, readonly) UILabel *eventsLabel;
 @property (nonatomic) UIImageView *selectedBackgroundImage;
+@property (nonatomic) NSInteger numberOfEvents;
 
 - (void)setBottomBorderSlideHeight:(CGFloat)height;
 - (void)setBottomBorderColor:(UIColor *)color;

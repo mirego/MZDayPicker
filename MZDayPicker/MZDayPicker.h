@@ -107,6 +107,13 @@
 @property (nonatomic, weak) id<MZDayPickerDataSource> dataSource;
 
 /*
+ * Property for calendar events (dots)
+ */
+@property (nonatomic) NSArray *eventDates;
+@property (nonatomic) UIColor *pastEventsColor;
+@property (nonatomic) UIColor *futureEventsColor;
+
+/*
  * Initializers
  * MZDayPicker supports storyboard
  */

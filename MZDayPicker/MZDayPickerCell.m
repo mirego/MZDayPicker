@@ -33,6 +33,7 @@
 @property (nonatomic, strong) UIView *containerView;
 @property (nonatomic, strong) UILabel *dayLabel;
 @property (nonatomic, strong) UILabel *dayNameLabel;
+
 @end
 
 @implementation MZDayPickerCell
@@ -56,6 +57,17 @@
     _selectedBackgroundImage = selectedBackgroundImage;
     
     [self addSubview:_selectedBackgroundImage];
+}
+
+- (void)setNumberOfEvents:(NSInteger)numberOfEvents
+{
+    // Max out number of events to 4 for UI sexiness reason
+    if (numberOfEvents <= 4) {
+        _numberOfEvents = numberOfEvents;
+    } else {
+        _numberOfEvents = 4;
+    }
+    [self layoutEvents];
 }
 
 - (void)drawRect:(CGRect)rect
@@ -93,6 +105,11 @@
     return self;
 }
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+}
+
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
 
@@ -118,8 +135,16 @@
     self.dayNameLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:self.dayNameLabel.font.pointSize];
     self.dayNameLabel.backgroundColor = [UIColor clearColor];
     
+    _eventsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.cellSize.width, self.cellSize.height)];
+    [_eventsLabel setBackgroundColor:[UIColor clearColor]];
+    [_eventsLabel setTextColor:[UIColor lightGrayColor]];
+    [_eventsLabel setCenter:CGPointMake(containingView.frame.size.width/2, CGRectGetMaxY(self.dayNameLabel.frame) + 5)];
+    [_eventsLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:30]];
+    [_eventsLabel setTextAlignment:NSTextAlignmentCenter];
+    
     [containingView addSubview: self.dayLabel];
     [containingView addSubview: self.dayNameLabel];
+    [containingView addSubview: _eventsLabel];
     
     self.containerView = containingView;
     
@@ -131,5 +156,14 @@
     }
 }
 
+- (void)layoutEvents
+{
+    NSString *eventString = @"";
+    for (int i = 0; i < _numberOfEvents; i++) {
+        eventString = [eventString stringByAppendingString:@"·"];
+    }
+    
+    [_eventsLabel setText:eventString];
+}
 
 @end
