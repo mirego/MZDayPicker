@@ -556,19 +556,20 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         
         NSIndexPath* centerIndexPath = [self.tableView indexPathForRowAtPoint:CGPointMake(0, point.y)];
         NSDate* newDate = [(MZDay *)self.tableDaysData[centerIndexPath.row] date];
+        MZDay *day = self.tableDaysData[centerIndexPath.row];
         
         NSDateComponents *newComponents = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:newDate];
         NSDateComponents *oldComponents = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:_currentDate];
 
         if (oldComponents.month != newComponents.month) {
             if ([self.delegate respondsToSelector:@selector(dayPicker:monthDidChange:)]) {
-                [self.delegate dayPicker:self monthDidChange:newComponents.month + 1];
+                [self.delegate dayPicker:self monthDidChange:day];
             }
         }
         
         if (oldComponents.year != newComponents.year) {
             if ([self.delegate respondsToSelector:@selector(dayPicker:yearDidChange:)]) {
-                [self.delegate dayPicker:self yearDidChange:newComponents.year];
+                [self.delegate dayPicker:self yearDidChange:day];
             }
         }
         
@@ -604,7 +605,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     
     if (centerIndexPath.row != self.currentIndex.row) {
         if ([self.delegate respondsToSelector:@selector(dayPicker:willSelectDay:)])
-            [self.delegate dayPicker:self willSelectDay:self.tableDaysData[centerIndexPath.row]];
+            [self.delegate dayPicker:self willSelectDay:self.tableDaysData[centerIndexPath.row - 1]];
         
         _currentDay = centerIndexPath.row-1;
         _currentDate = [(MZDay *)self.tableDaysData[centerIndexPath.row] date];
