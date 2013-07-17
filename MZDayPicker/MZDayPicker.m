@@ -510,7 +510,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
             // Zoom step using cosinus
             CGFloat zoomStep = cosf(M_PI_2*distance/self.dayCellSize.width);
             
-            if (distance < self.dayCellSize.width && distance > -self.dayCellSize.width) {
+            if (distance < self.dayCellSize.width / 2 && distance > -self.dayCellSize.width / 2) {
                 
                 if (_dayLabelFont) {
                     cell.dayLabel.font = _dayLabelFont;
@@ -524,7 +524,13 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
                 }
                 [cell setBottomBorderSlideHeight:zoomStep];
                 
-                
+                //NSIndexPath* centerIndexPath = [self.tableView indexPathForRowAtPoint:CGPointMake(0, point.y)];
+                //NSDate* newDate = [(MZDay *)self.tableDaysData[centerIndexPath.row] date];
+                NSIndexPath *currentIndexPath = [_tableView indexPathForCell:cell];
+                MZDay *day = self.tableDaysData[currentIndexPath.row - 1];
+                if ([self.delegate respondsToSelector:@selector(dayPicker:willOverDay:)]) {
+                    [self.delegate dayPicker:self willOverDay:day];
+                }
                 
             } else {
                 if (_dayLabelFont) {
@@ -586,6 +592,14 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     
     [self scrollViewDidFinishScrolling:scrollView];
 }
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    if ([self.delegate respondsToSelector:@selector(dayPicker:scrollViewWillBeginDragging:)]) {
+        [self.delegate dayPicker:self scrollViewWillBeginDragging:scrollView];
+    }
+}
+
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     if ([self.delegate respondsToSelector:@selector(dayPicker:scrollViewDidEndDragging:)]) {

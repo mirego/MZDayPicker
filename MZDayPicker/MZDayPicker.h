@@ -41,6 +41,8 @@
 - (void)dayPicker:(MZDayPicker *)dayPicker scrollViewDidScroll:(UIScrollView *)scrollView;
 - (void)dayPicker:(MZDayPicker *)dayPicker scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
 - (void)dayPicker:(MZDayPicker *)dayPicker scrollViewDidEndDragging:(UIScrollView *)scrollView;
+- (void)dayPicker:(MZDayPicker *)dayPicker scrollViewWillBeginDragging:(UIScrollView *)scrollView;
+- (void)dayPicker:(MZDayPicker *)dayPicker willOverDay:(MZDay *)day;
 
 - (void)dayPicker:(MZDayPicker *)dayPicker willSelectDay:(MZDay *)day;
 - (void)dayPicker:(MZDayPicker *)dayPicker didSelectDay:(MZDay *)day;
