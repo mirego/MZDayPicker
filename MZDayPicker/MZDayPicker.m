@@ -52,7 +52,7 @@ NSInteger const kDefaultFinalInactiveDays = 8;
 
 #define kDefaultColorDay [UIColor grayColor]
 #define kDefaultColorDayName [UIColor darkGrayColor]
-#define kDefaultColorDayNameSelected [UIColor whiteColor]
+#define kDefaultColorDayNameSelected [UIColor colorWithRed:150/255.0f green:0 blue:35/255.0f alpha:1.00f]
 #define kDefaultColorBottomBorder [UIColor colorWithRed:0.22f green:0.57f blue:0.80f alpha:1.00f]
 
 
