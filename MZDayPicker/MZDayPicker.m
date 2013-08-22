@@ -52,6 +52,7 @@ NSInteger const kDefaultFinalInactiveDays = 8;
 
 #define kDefaultColorDay [UIColor grayColor]
 #define kDefaultColorDayName [UIColor darkGrayColor]
+#define kDefaultColorDayNameSelected [UIColor whiteColor]
 #define kDefaultColorBottomBorder [UIColor colorWithRed:0.22f green:0.57f blue:0.80f alpha:1.00f]
 
 
@@ -522,6 +523,8 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
                 if (_dayNameLabelFont) {
                     cell.dayNameLabel.font = _dayNameLabelSelectedFont;
                 }
+                cell.dayNameLabel.textColor = kDefaultColorDayNameSelected;
+
                 [cell setBottomBorderSlideHeight:zoomStep];
                 
                 //NSIndexPath* centerIndexPath = [self.tableView indexPathForRowAtPoint:CGPointMake(0, point.y)];
@@ -539,7 +542,8 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
                 } else {
                     cell.dayLabel.font = [cell.dayLabel.font fontWithSize:self.dayLabelFontSize];
                 }
-                
+                cell.dayNameLabel.textColor = kDefaultColorDayName;
+
                 if (_dayNameLabelFont) {
                     cell.dayNameLabel.font = _dayNameLabelFont;
                 }
@@ -728,6 +732,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
             cell.dayNameLabel.font = _dayNameLabelSelectedFont;
         }
         
+        cell.dayNameLabel.textColor = kDefaultColorDayNameSelected;
         [cell.dayLabel setTextColor:[UIColor whiteColor]];
         
     } else {
@@ -742,6 +747,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
             cell.dayNameLabel.font = _dayNameLabelFont;
         }
         
+        cell.dayNameLabel.textColor = kDefaultColorDayName;
         cell.containerView.backgroundColor = [UIColor clearColor];
         [cell setBottomBorderSlideHeight:0];
     }
