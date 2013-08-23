@@ -299,6 +299,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         self.tableView.backgroundColor = [UIColor clearColor];
         self.tableView.showsVerticalScrollIndicator = NO;
         self.tableView.decelerationRate = UIScrollViewDecelerationRateFast;
+        self.tableView.scrollsToTop = NO;
         
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
         [self.tableView addGestureRecognizer:tapGesture];
