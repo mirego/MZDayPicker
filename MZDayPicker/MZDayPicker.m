@@ -415,7 +415,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         newDay.day = [NSNumber numberWithInt:components.day];
         newDay.month = [NSNumber numberWithInt:components.month];
         newDay.year = [NSNumber numberWithInt:components.year];
-        newDay.name = [dateNameFormatter stringFromDate:date];
+        newDay.name = NSLocalizedString([dateNameFormatter stringFromDate:date], nil);
         newDay.date = date;
         
         [tableData addObject:newDay];
@@ -430,7 +430,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         newDay.day = [NSNumber numberWithInt:components.day];
         newDay.month = [NSNumber numberWithInt:components.month];
         newDay.year = [NSNumber numberWithInt:components.year];
-        newDay.name = [dateNameFormatter stringFromDate:date];
+        newDay.name = NSLocalizedString([dateNameFormatter stringFromDate:date], nil);
         newDay.date = date;
         
         [tableData addObject:newDay];
@@ -447,7 +447,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         newDay.day = [NSNumber numberWithInt:components.day];
         newDay.month = [NSNumber numberWithInt:components.month];
         newDay.year = [NSNumber numberWithInt:components.year];
-        newDay.name = [dateNameFormatter stringFromDate:date];
+        newDay.name = NSLocalizedString([dateNameFormatter stringFromDate:date], nil);
         newDay.date = date;
         
         [tableData addObject:newDay];
